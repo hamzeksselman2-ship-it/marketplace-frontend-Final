@@ -5,8 +5,8 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import Terms from './pages/Terms';
-import SellerProfile from './pages/SellerProfile';
 import AuthPage from './pages/AuthPage';
+import SignupPage from './pages/SignupPage'; // አዲሱ ገጽ
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
             <Route path="/about" component={AboutUs} />
             <Route path="/terms" component={Terms} />
             <Route path="/login" component={AuthPage} />
-            <Route path="/seller/:id" component={SellerProfile} />
+            <Route path="/signup" component={SignupPage} /> 
             <Redirect to="/" />
           </Switch>
         </main>
