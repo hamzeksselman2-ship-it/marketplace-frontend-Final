@@ -7,7 +7,8 @@ import AboutUs from './pages/AboutUs';
 import Terms from './pages/Terms';
 import AuthPage from './pages/AuthPage';
 import SignupPage from './pages/SignupPage';
-import AddProductPage from './pages/AddProductPage'; // አዲሱ ገጽ
+import AddProductPage from './pages/AddProductPage';
+import ProductDetails from './pages/ProductDetails'; // አዲሱ ገጽ
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
             <Route path="/terms" component={Terms} />
             <Route path="/login" component={AuthPage} />
             <Route path="/signup" component={SignupPage} />
-            <Route path="/add-product" component={AddProductPage} /> 
+            <Route path="/add-product" component={AddProductPage} />
+            <Route path="/product/:id" component={ProductDetails} /> 
             <Redirect to="/" />
           </Switch>
         </main>
