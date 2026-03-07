@@ -2,71 +2,42 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 function AddProductPage() {
-  const [title, setTitle] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [image, setImage] = useState(null); // ፋይሉን ለመያዝ
+  const [f, setF] = useState({ title: '', price: '', desc: '', phone: '', img: null });
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://marketplace-backend-2uyu.onrender.com";
-
-  // ፎቶውን ወደ Cloudinary ለመጫን
-  const uploadImage = async () => {
+  const uploadImg = async () => {
     const data = new FormData();
-    data.append("file", image);
-    data.append("upload_preset", "ml_default"); // ይህንን በኋላ እናስተካክላለን
-    data.append("cloud_name", "dqvx8mpxi"); // ነጻ ክላውድ ስም
-
-    const res = await fetch("https://api.cloudinary.com/v1_1/dqvx8mpxi/image/upload", {
-      method: "post",
-      body: data
-    });
-    const file = await res.json();
-    return file.secure_url; // የተጫነውን ፎቶ ሊንክ ይመልሳል
+    data.append("file", f.img); data.append("upload_preset", "ml_default");
+    const res = await fetch("https://api.cloudinary.com/v1_1/dqvx8mpxi/image/upload", { method: "POST", body: data });
+    const file = await res.json(); return file.secure_url;
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault(); setLoading(true);
     const user = JSON.parse(localStorage.getItem('user'));
-
-    try {
-      const imageUrl = await uploadImage(); // መጀመሪያ ፎቶውን እንጭናለን
-      const response = await fetch(`${BACKEND_URL}/api/products`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, price, description, imageUrl, seller: user.id }),
-      });
-
-      if (response.ok) {
-        alert("ምርቱ በፎቶው አማካኝነት ተመዝግቧል!");
-        history.push('/');
-      }
-    } catch (err) {
-      alert("ስህተት አጋጥሟል");
-    }
-    setLoading(false);
+    const url = await uploadImg();
+    await fetch("https://marketplace-backend-2uyu.onrender.com/api/products", {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: f.title, price: f.price, description: f.desc, imageUrl: url, phone: f.phone, seller: user.id }),
+    });
+    setLoading(false); history.push('/');
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: '50px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
-      <h2>ምርት በፎቶ ይጫኑ</h2>
+    <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+      <h2>አዲስ ምርት ይጫኑ</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <input type="text" placeholder="የምርት ስም" onChange={(e) => setTitle(e.target.value)} required style={{ padding: '10px' }} />
-        <input type="number" placeholder="ዋጋ" onChange={(e) => setPrice(e.target.value)} required style={{ padding: '10px' }} />
-        <textarea placeholder="መግለጫ" onChange={(e) => setDescription(e.target.value)} required style={{ padding: '10px' }} />
-        
-        {/* የፎቶ መምረጫ ሳጥን */}
-        <label>የምርት ፎቶ ይምረጡ፦</label>
-        <input type="file" onChange={(e) => setImage(e.target.files[0])} required />
-        
-        <button type="submit" disabled={loading} style={{ padding: '10px', backgroundColor: '#28a745', color: 'white', border: 'none', cursor: 'pointer' }}>
+        <input type="text" placeholder="የምርት ስም" onChange={e => setF({...f, title: e.target.value})} required />
+        <input type="number" placeholder="ዋጋ" onChange={e => setF({...f, price: e.target.value})} required />
+        <textarea placeholder="መግለጫ" onChange={e => setF({...f, desc: e.target.value})} required />
+        <input type="tel" placeholder="ስልክ ቁጥር" onChange={e => setF({...f, phone: e.target.value})} required />
+        <input type="file" onChange={e => setF({...f, img: e.target.files[0]})} required />
+        <button type="submit" disabled={loading} style={{ background: '#28a745', color: 'white', padding: '10px' }}>
           {loading ? "በመጫን ላይ..." : "ምርቱን መዝግብ"}
         </button>
       </form>
     </div>
   );
 }
-
 export default AddProductPage;
