@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 function Home() {
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // የፍለጋ ቃሉን መያዣ
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const history = useHistory();
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://marketplace-backend-2uyu.onrender.com";
 
@@ -20,7 +22,7 @@ function Home() {
       });
   }, [BACKEND_URL]);
 
-  // በፍለጋ ቃሉ መሰረት ምርቶችን የመለየት ስራ (Filtering)
+  // በፍለጋ ቃሉ መሰረት ምርቶችን የመለየት ስራ
   const filteredProducts = products.filter(product =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -43,32 +45,64 @@ function Home() {
             fontSize: '16px',
             borderRadius: '25px',
             border: '2px solid #28a745',
-            outline: 'none'
+            outline: 'none',
+            boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
           }}
         />
       </div>
 
       {loading ? (
-        <p>በመጫን ላይ...</p>
+        <p>በመጫን ላይ... እባክዎ ይጠብቁ</p>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px', marginTop: '20px' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
+          gap: '25px', 
+          marginTop: '30px',
+          padding: '0 20px'
+        }}>
           {filteredProducts.length > 0 ? (
             filteredProducts.map(product => (
-              <div key={product._id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '10px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+              <div key={product._id} style={{ 
+                border: '1px solid #ddd', 
+                padding: '15px', 
+                borderRadius: '12px', 
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                backgroundColor: '#fff',
+                transition: 'transform 0.2s'
+              }}>
                 <img 
-                  src={product.imageUrl || 'https://via.placeholder.com/150'} 
+                  src={product.imageUrl || 'https://via.placeholder.com/200'} 
                   alt={product.title} 
-                  style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '5px' }} 
+                  style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '8px' }} 
                 />
-                <h3 style={{ margin: '10px 0' }}>{product.title}</h3>
-                <p style={{ color: '#ff5722', fontWeight: 'bold' }}>{product.price} ETB</p>
-                <button style={{ backgroundColor: '#28a745', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer' }}>
+                <h3 style={{ margin: '15px 0 5px', color: '#333' }}>{product.title}</h3>
+                <p style={{ color: '#ff5722', fontSize: '18px', fontWeight: 'bold', margin: '5px 0 15px' }}>
+                  {product.price} ETB
+                </p>
+                
+                {/* ወደ ዝርዝር ገጽ የሚወስደው አዲሱ ቁልፍ */}
+                <button 
+                  onClick={() => history.push(`/product/${product._id}`)}
+                  style={{ 
+                    backgroundColor: '#28a745', 
+                    color: 'white', 
+                    border: 'none', 
+                    padding: '10px 20px', 
+                    borderRadius: '5px', 
+                    cursor: 'pointer',
+                    width: '100%',
+                    fontWeight: 'bold'
+                  }}
+                >
                   ዝርዝር እይ
                 </button>
               </div>
             ))
           ) : (
-            <p style={{ gridColumn: '1/-1', color: '#888' }}>ምንም የተገኘ ምርት የለም።</p>
+            <div style={{ gridColumn: '1/-1', padding: '50px' }}>
+              <p style={{ color: '#888', fontSize: '18px' }}>ምንም የተገኘ ምርት የለም።</p>
+            </div>
           )}
         </div>
       )}
