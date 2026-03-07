@@ -8,7 +8,9 @@ import Terms from './pages/Terms';
 import AuthPage from './pages/AuthPage';
 import SignupPage from './pages/SignupPage';
 import AddProductPage from './pages/AddProductPage';
-import ProductDetails from './pages/ProductDetails'; // አዲሱ ገጽ
+import ProductDetails from './pages/ProductDetails';
+import EditProductPage from './pages/EditProductPage'; // አዲስ
+import Inbox from './pages/Inbox'; // አዲስ
 
 function App() {
   return (
@@ -23,7 +25,9 @@ function App() {
             <Route path="/login" component={AuthPage} />
             <Route path="/signup" component={SignupPage} />
             <Route path="/add-product" component={AddProductPage} />
-            <Route path="/product/:id" component={ProductDetails} /> 
+            <Route path="/product/:id" component={ProductDetails} />
+            <Route path="/edit-product/:id" component={EditProductPage} />
+            <Route path="/inbox" component={Inbox} />
             <Redirect to="/" />
           </Switch>
         </main>
