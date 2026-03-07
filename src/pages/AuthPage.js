@@ -11,36 +11,38 @@ function AuthPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setMessage("በመግባት ላይ... እባክዎ ይጠብቁ");
+    setMessage("በመግባት ላይ...");
     try {
       const response = await fetch(`${BACKEND_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      
       const data = await response.json();
-      
       if (response.ok) {
-        setMessage("እንኳን ደህና መጡ! ወደ ዋናው ገጽ እየወሰድኩዎት ነው...");
-        // የተጠቃሚውን መረጃ በብሮውዘሩ ላይ ሴቭ እናደርጋለን
+        setMessage("እንኳን ደህና መጡ!");
         localStorage.setItem('user', JSON.stringify(data.user));
-        
-        // ከ 2 ሰከንድ በኋላ ወደ Home ገጽ ይወስደናል
-        setTimeout(() => {
-          history.push('/');
-        }, 2000);
+        setTimeout(() => history.push('/'), 2000);
       } else {
         setMessage("ስህተት: " + data.message);
       }
     } catch (err) {
-      setMessage("ከባክኤንድ ጋር መገናኘት አልተቻለም። ሰርቨሩ መብራቱን ያረጋግጡ።");
+      setMessage("ከባክኤንድ ጋር መገናኘት አልተቻለም።");
     }
   };
 
   return (
     <div style={{ textAlign: 'center', padding: '50px', maxWidth: '400px', margin: '0 auto' }}>
-      <h1 style={{ color: '#28a745' }}>Login</h1>
-      <p style={{ marginBottom: '20px', color: '#666' }}>{message || "Welcome back! Please enter your details."}</p>
-      
-      <form onSubmit={handleLogin} style={{
+      <h1>Login</h1>
+      <p>{message || "Welcome back!"}</p>
+      <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ padding: '10px' }} required />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ padding: '10px' }} required />
+        <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: 'white', border: 'none', cursor: 'pointer' }}>Login</button>
+      </form>
+      <p style={{ marginTop: '20px' }}>Don't have an account? <a href="/signup">Sign up here</a></p>
+    </div>
+  );
+}
+
+export default AuthPage;
